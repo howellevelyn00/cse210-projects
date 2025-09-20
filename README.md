@@ -1,5 +1,5 @@
 # cse210-Evelyn Van Orden-template
- for students in CSE 210.
+ for Evelyn in CSE 210.
 
 This repository contains the starter code for many different projects. They are arranged as follows:
 
