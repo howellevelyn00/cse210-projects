@@ -8,7 +8,10 @@ namespace SimpleJournal
     {
         private List<Entry> entries = new List<Entry>();
 
-        public void AddEntry(Entry e) => entries.Add(e);
+        public void AddEntry(Entry e)
+        {
+            entries.Add(e);
+        }
 
         public void DisplayAll()
         {
@@ -17,7 +20,8 @@ namespace SimpleJournal
                 Console.WriteLine("Journal is empty.");
                 return;
             }
-            foreach (var e in entries)
+
+            foreach (Entry e in entries)
             {
                 e.Display();
             }
@@ -29,16 +33,16 @@ namespace SimpleJournal
             {
                 using (var sw = new StreamWriter(filename))
                 {
-                    foreach (var e in entries)
+                    foreach (Entry e in entries)
                     {
                         sw.WriteLine(e.ToFileLine());
                     }
                 }
-                Console.WriteLine($"Journal saved to {filename}");
+                Console.WriteLine("Journal saved to " + filename);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error saving file: {ex.Message}");
+                Console.WriteLine("Error saving file: " + ex.Message);
             }
         }
 
@@ -52,21 +56,21 @@ namespace SimpleJournal
                     return;
                 }
 
-                var lines = File.ReadAllLines(filename);
+                string[] lines = File.ReadAllLines(filename);
                 var loaded = new List<Entry>();
-                foreach (var line in lines)
+                foreach (string line in lines)
                 {
                     if (string.IsNullOrWhiteSpace(line)) continue;
-                    var entry = Entry.FromFileLine(line);
+                    Entry entry = Entry.FromFileLine(line);
                     loaded.Add(entry);
                 }
 
                 entries = loaded;
-                Console.WriteLine($"Loaded {entries.Count} entries from {filename}");
+                Console.WriteLine("Loaded " + entries.Count + " entries from " + filename);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error loading file: {ex.Message}");
+                Console.WriteLine("Error loading file: " + ex.Message);
             }
         }
     }

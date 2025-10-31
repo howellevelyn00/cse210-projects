@@ -7,8 +7,8 @@ namespace SimpleJournal
     {
         public static void Main(string[] args)
         {
-            var promptGen = new PromptGenerator();
-            var journal = new Journal();
+            PromptGenerator promptGen = new PromptGenerator();
+            Journal journal = new Journal();
             bool exit = false;
 
             while (!exit)
@@ -24,7 +24,7 @@ namespace SimpleJournal
                 Console.WriteLine("0) Exit");
                 Console.Write("Choose an option: ");
 
-                var choice = Console.ReadLine();
+                string choice = Console.ReadLine();
                 Console.WriteLine();
 
                 switch (choice)
@@ -37,24 +37,25 @@ namespace SimpleJournal
                         break;
                     case "3":
                         Console.Write("Enter filename to save to: ");
-                        var saveName = Console.ReadLine();
+                        string saveName = Console.ReadLine();
                         journal.Save(saveName);
                         break;
                     case "4":
                         Console.Write("Enter filename to load from: ");
-                        var loadName = Console.ReadLine();
+                        string loadName = Console.ReadLine();
                         journal.Load(loadName);
                         break;
                     case "5":
                         Console.WriteLine("Prompts:");
-                        foreach (var p in promptGen.GetAllPrompts())
+                        List<string> allPrompts = promptGen.GetAllPrompts();
+                        foreach (string p in allPrompts)
                         {
                             Console.WriteLine("- " + p);
                         }
                         break;
                     case "6":
                         Console.Write("Enter your new prompt: ");
-                        var newPrompt = Console.ReadLine();
+                        string newPrompt = Console.ReadLine();
                         if (!string.IsNullOrWhiteSpace(newPrompt))
                         {
                             promptGen.AddPrompt(newPrompt);
@@ -79,24 +80,29 @@ namespace SimpleJournal
 
         private static void WriteEntry(PromptGenerator promptGen, Journal journal)
         {
-            var prompt = promptGen.GetRandomPrompt();
+            string prompt = promptGen.GetRandomPrompt();
             Console.WriteLine("Prompt:");
             Console.WriteLine(prompt);
             Console.WriteLine();
             Console.WriteLine("Type your response (blank line to finish):");
 
-            var lines = new List<string>();
+            List<string> lines = new List<string>();
             while (true)
             {
-                var line = Console.ReadLine();
-                if (string.IsNullOrEmpty(line)) break;
+                string line = Console.ReadLine();
+                if (string.IsNullOrEmpty(line))
+                {
+                    break;
+                }
                 lines.Add(line);
             }
-            var response = string.Join(Environment.NewLine, lines);
 
-            var date = DateTime.Now.ToString("yyyy-MM-dd");
-            var entry = new Entry(prompt, response, date);
+            string response = string.Join(Environment.NewLine, lines);
+            string date = DateTime.Now.ToString("yyyy-MM-dd");
+
+            Entry entry = new Entry(prompt, response, date);
             journal.AddEntry(entry);
+
             Console.WriteLine("Entry saved to journal.");
         }
     }

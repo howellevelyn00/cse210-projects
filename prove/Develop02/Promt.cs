@@ -5,13 +5,13 @@ namespace SimpleJournal
 {
     public class PromptGenerator
     {
-        private List<string> prompts;
-        private static readonly Random rng = new Random();
-        private int lastIndex = -1;
+        private List<string> _prompts;
+        private static readonly Random _rng = new Random();
+        private int _lastIndex = -1;
 
         public PromptGenerator()
         {
-            prompts = new List<string>()
+            _prompts = new List<string>()
             {
                 "Who was the most interesting person I interacted with today?",
                 "What was the best part of my day?",
@@ -24,26 +24,39 @@ namespace SimpleJournal
                 "What is a moment from today that made me smile?",
                 "How did I take care of myself today?",
                 "What is one small victory I had today?"
-
             };
         }
 
         public string GetRandomPrompt()
         {
-            if (prompts.Count == 0) return "No prompts available.";
-            if (prompts.Count == 1) return prompts[0];
+            if (_prompts.Count == 0)
+            {
+                return "No prompts available.";
+            }
+
+            if (_prompts.Count == 1)
+            {
+                return _prompts[0];
+            }
 
             int idx;
             do
             {
-                idx = rng.Next(prompts.Count);
-            } while (idx == lastIndex);
+                idx = _rng.Next(_prompts.Count);
+            } while (idx == _lastIndex);
 
-            lastIndex = idx;
-            return prompts[idx];
+            _lastIndex = idx;
+            return _prompts[idx];
         }
 
-        public void AddPrompt(string p) => prompts.Add(p);
-        public IEnumerable<string> GetAllPrompts() => prompts.AsReadOnly();
+        public void AddPrompt(string p)
+        {
+            _prompts.Add(p);
+        }
+
+        public List<string> GetAllPrompts()
+        {
+            return new List<string>(_prompts);
+        }
     }
 }
