@@ -62,7 +62,7 @@ namespace ScriptureMemorizer
                 }
 
                 // Continue loop — console will be cleared and redisplayed at top of loop
-            }
+             }
         }
     }
 }

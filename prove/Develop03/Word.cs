@@ -1,48 +1,54 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
-
 namespace ScriptureMemorizer
 {
     public class Word
     {
-        private string _original;
-
+        private string _text;
         private bool _hidden;
 
-        public Word(string original)
+        public Word(string text)
         {
-            _original = original;
+            _text = text ?? "";
             _hidden = false;
         }
 
-        // Mark the word hidden (idempotent)
+        public bool IsHidden()
+        {
+            return _hidden;
+        }
+
         public void Hide()
         {
             _hidden = true;
         }
 
-        public bool IsHidden => _hidden;
-
-        // Display the word: either original or masked (letters replaced with underscores)
-        public string Display()
+        // Return the display version: letters/digits -> '_' when hidden, otherwise original token
+        public string GetDisplayText()
         {
-            if (!_hidden) return _original;
+            if (!_hidden) return _text;
 
-            // Mask only letters and digits; leave punctuation like ',' '.' ':' '-' etc.
-            return Regex.Replace(_original, "[A-Za-z0-9]", "_");
+            char[] arr = new char[_text.Length];
+            for (int i = 0; i < _text.Length; i++)
+            {
+                char c = _text[i];
+                if (char.IsLetterOrDigit(c))
+                    arr[i] = '_';
+                else
+                    arr[i] = c; // keep punctuation
+            }
+            return new string(arr);
         }
 
-        // For checking if this token is a real "word" (contains letters/digits)
+        // Consider a token a "word" only if it has at least one letter or digit
         public bool IsWordToken()
         {
-            return Regex.IsMatch(_original, "[A-Za-z0-9]");
+            for (int i = 0; i < _text.Length; i++)
+            {
+                if (char.IsLetterOrDigit(_text[i]))
+                    return true;
+            }
+            return false;
         }
 
-        // Expose original for any debugging or logic
-        public string Original => _original;
+        public string Original => _text;
     }
 }
-
-                // Holds the scripture reference and the list of Word tokens for the text.

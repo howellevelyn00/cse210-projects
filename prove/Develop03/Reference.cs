@@ -1,73 +1,74 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace ScriptureMemorizer
 {
     public class Reference
     {
-        public string Book { get; private set; }
-        public int Chapter { get; private set; }
-        public int VerseStart { get; private set; }
-        public int? VerseEnd { get; private set; } // null if single verse
+        private string _book;
+        private int _chapter;
+        private int _verseStart;
+        private int _verseEnd;
 
-        // Constructor for single verse (John 3:16)
-        public Reference(string book, int chapter, int verse)
+        public Reference(string book, int chapter, int verseStart, int verseEnd = -1)
         {
-            Book = book;
-            Chapter = chapter;
-            VerseStart = verse;
-            VerseEnd = null;
+            _book = book;
+            _chapter = chapter;
+            _verseStart = verseStart;
+            _verseEnd = verseEnd;
         }
 
-        // Constructor for verse range (Proverbs 3:5-6)
-        public Reference(string book, int chapter, int verseStart, int verseEnd)
+        public static Reference Parse(string input)
         {
-            Book = book;
-            Chapter = chapter;
-            VerseStart = verseStart;
-            VerseEnd = verseEnd;
-        }
+            // Examples it supports:
+            // "John 3:16"
+            // "Proverbs 3:5-6"
+            // "1 Nephi 3:7"
 
-        // Parse from a string like "John 3:16" or "Proverbs 3:5-6"
-        public static Reference Parse(string refText)
-        {
-            // Very simple parser; expects "Book chapter:verse" or "Book chapter:verse-verse"
-            // e.g. "John 3:16" or "Proverbs 3:5-6"
-            var parts = refText.Trim().Split(' ', 2);
+            var match = Regex.Match(input.Trim(),
+                @"^([\w\s]+)\s+(\d+):(\d+)(?:-(\d+))?$");
 
-            if (parts.Length < 2) throw new ArgumentException("Invalid reference format.");
-            string book = parts[0];
-            string rest = parts[1];
+            if (!match.Success)
+                throw new FormatException("Invalid scripture reference format. Use Book Chapter:Verse or Book Chapter:StartVerse-EndVerse");
 
-            var chapVerse = rest.Split(':');
-            if (chapVerse.Length != 2) throw new ArgumentException("Invalid reference format.");
-            int chapter = int.Parse(chapVerse[0]);
-            string versePart = chapVerse[1];
-            if (versePart.Contains('-'))
-            {
-                var v = versePart.Split('-');
-                int start = int.Parse(v[0]);
-                int end = int.Parse(v[1]);
-                return new Reference(book, chapter, start, end);
-            }
-            else
-            {
-                int verse = int.Parse(versePart);
-                return new Reference(book, chapter, verse);
-            }
+            string book = match.Groups[1].Value.Trim();
+            int chapter = int.Parse(match.Groups[2].Value);
+            int verseStart = int.Parse(match.Groups[3].Value);
+            int verseEnd = -1;
+
+            if (match.Groups[4].Success)
+                verseEnd = int.Parse(match.Groups[4].Value);
+
+            return new Reference(book, chapter, verseStart, verseEnd);
         }
 
         public override string ToString()
         {
-            if (VerseEnd.HasValue)
-                return $"{Book} {Chapter}:{VerseStart}-{VerseEnd.Value}";
+            if (_verseEnd != -1 && _verseEnd != _verseStart)
+                return $"{_book} {_chapter}:{_verseStart}-{_verseEnd}";
             else
-                return $"{Book} {Chapter}:{VerseStart}";
+                return $"{_book} {_chapter}:{_verseStart}";
+        }
+
+        // Getters for other classes to use
+        public string GetBook()
+        {
+            return _book;
+        }
+
+        public int GetChapter()
+        {
+            return _chapter;
+        }
+
+        public int GetVerseStart()
+        {
+            return _verseStart;
+        }
+
+        public int GetVerseEnd()
+        {
+            return _verseEnd;
         }
     }
-
 }
-                // Represents a single word (or token) in the scripture text.
-            
