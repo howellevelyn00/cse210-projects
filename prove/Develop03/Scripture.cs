@@ -9,21 +9,17 @@ namespace ScriptureMemorizer
         private List<Word> _tokens;
         private Random _rand;
 
-        public Reference Reference
-        {
-            get { return _reference; }
-        }
-
         public Scripture(Reference reference, string text)
         {
-            _reference = reference ?? throw new ArgumentNullException(nameof(reference));
-            _tokens = new List<Word>();
+            _reference = reference;
             _rand = new Random();
+            _tokens = new List<Word>();
 
-            if (text == null) text = "";
+            if (text == null)
+            {
+                text = "";
+            }
 
-            // Simple tokenization: split on spaces but keep punctuation attached to tokens.
-            // This keeps things straightforward and easy to display.
             string[] parts = text.Split(' ');
             for (int i = 0; i < parts.Length; i++)
             {
@@ -31,67 +27,80 @@ namespace ScriptureMemorizer
             }
         }
 
-        // Build the display text by concatenating token displays with spaces
-        public string GetDisplayText()
+        public Reference GetReference()
         {
-            if (_tokens.Count == 0) return "";
-
-            System.Text.StringBuilder sb = new System.Text.StringBuilder();
-            for (int i = 0; i < _tokens.Count; i++)
-            {
-                sb.Append(_tokens[i].GetDisplayText());
-                if (i < _tokens.Count - 1)
-                    sb.Append(" ");
-            }
-            return sb.ToString();
+            return _reference;
         }
 
-        // Return true if every token that is a word is hidden
+        public string GetDisplayText()
+        {
+            string output = "";
+
+            for (int i = 0; i < _tokens.Count; i++)
+            {
+                output += _tokens[i].GetDisplayText();
+
+                if (i < _tokens.Count - 1)
+                {
+                    output += " ";
+                }
+            }
+
+            return output;
+        }
+
         public bool AllWordsHidden()
         {
             for (int i = 0; i < _tokens.Count; i++)
             {
                 if (_tokens[i].IsWordToken() && !_tokens[i].IsHidden())
+                {
                     return false;
+                }
             }
+
             return true;
         }
 
-        // Hide up to 'count' random visible word tokens.
-        // Returns the number of tokens actually hidden.
         public int HideRandomVisibleWords(int count)
         {
-            if (count <= 0) return 0;
+            List<int> visible = new List<int>();
 
-            // Collect indices of visible word tokens
-            List<int> visibleIndices = new List<int>();
             for (int i = 0; i < _tokens.Count; i++)
             {
                 if (_tokens[i].IsWordToken() && !_tokens[i].IsHidden())
-                    visibleIndices.Add(i);
+                {
+                    visible.Add(i);
+                }
             }
 
-            if (visibleIndices.Count == 0) return 0;
+            if (visible.Count == 0)
+            {
+                return 0;
+            }
 
-            int toHide = count;
-            if (toHide > visibleIndices.Count) toHide = visibleIndices.Count;
+            if (count > visible.Count)
+            {
+                count = visible.Count;
+            }
 
-            // Shuffle visibleIndices using Fisher-Yates
-            for (int i = visibleIndices.Count - 1; i > 0; i--)
+            for (int i = visible.Count - 1; i > 0; i--)
             {
                 int j = _rand.Next(i + 1);
-                int tmp = visibleIndices[i];
-                visibleIndices[i] = visibleIndices[j];
-                visibleIndices[j] = tmp;
+                int temp = visible[i];
+                visible[i] = visible[j];
+                visible[j] = temp;
             }
 
             int hidden = 0;
-            for (int k = 0; k < toHide; k++)
+
+            for (int i = 0; i < count; i++)
             {
-                int idx = visibleIndices[k];
-                if (!_tokens[idx].IsHidden())
+                int index = visible[i];
+
+                if (!_tokens[index].IsHidden())
                 {
-                    _tokens[idx].Hide();
+                    _tokens[index].Hide();
                     hidden++;
                 }
             }
@@ -99,17 +108,21 @@ namespace ScriptureMemorizer
             return hidden;
         }
 
-        // Optional: get the original (unmasked) text
         public string GetOriginalText()
         {
-            if (_tokens.Count == 0) return "";
-            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            string output = "";
+
             for (int i = 0; i < _tokens.Count; i++)
             {
-                sb.Append(_tokens[i].Original);
-                if (i < _tokens.Count - 1) sb.Append(" ");
+                output += _tokens[i].GetOriginal();
+
+                if (i < _tokens.Count - 1)
+                {
+                    output += " ";
+                }
             }
-            return sb.ToString();
+
+            return output;
         }
     }
 }

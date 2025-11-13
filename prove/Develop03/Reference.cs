@@ -10,7 +10,7 @@ namespace ScriptureMemorizer
         private int _verseStart;
         private int _verseEnd;
 
-        public Reference(string book, int chapter, int verseStart, int verseEnd = -1)
+        public Reference(string book, int chapter, int verseStart, int verseEnd)
         {
             _book = book;
             _chapter = chapter;
@@ -20,16 +20,13 @@ namespace ScriptureMemorizer
 
         public static Reference Parse(string input)
         {
-            // Examples it supports:
-            // "John 3:16"
-            // "Proverbs 3:5-6"
-            // "1 Nephi 3:7"
-
             var match = Regex.Match(input.Trim(),
                 @"^([\w\s]+)\s+(\d+):(\d+)(?:-(\d+))?$");
 
             if (!match.Success)
-                throw new FormatException("Invalid scripture reference format. Use Book Chapter:Verse or Book Chapter:StartVerse-EndVerse");
+            {
+                throw new FormatException("Invalid scripture reference format.");
+            }
 
             string book = match.Groups[1].Value.Trim();
             int chapter = int.Parse(match.Groups[2].Value);
@@ -37,20 +34,23 @@ namespace ScriptureMemorizer
             int verseEnd = -1;
 
             if (match.Groups[4].Success)
+            {
                 verseEnd = int.Parse(match.Groups[4].Value);
+            }
 
             return new Reference(book, chapter, verseStart, verseEnd);
         }
 
-        public override string ToString()
+        public string ToDisplayString()
         {
             if (_verseEnd != -1 && _verseEnd != _verseStart)
-                return $"{_book} {_chapter}:{_verseStart}-{_verseEnd}";
-            else
-                return $"{_book} {_chapter}:{_verseStart}";
+            {
+                return _book + " " + _chapter + ":" + _verseStart + "-" + _verseEnd;
+            }
+
+            return _book + " " + _chapter + ":" + _verseStart;
         }
 
-        // Getters for other classes to use
         public string GetBook()
         {
             return _book;

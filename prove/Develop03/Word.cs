@@ -7,13 +7,8 @@ namespace ScriptureMemorizer
 
         public Word(string text)
         {
-            _text = text ?? "";
+            _text = text;
             _hidden = false;
-        }
-
-        public bool IsHidden()
-        {
-            return _hidden;
         }
 
         public void Hide()
@@ -21,34 +16,34 @@ namespace ScriptureMemorizer
             _hidden = true;
         }
 
-        // Return the display version: letters/digits -> '_' when hidden, otherwise original token
-        public string GetDisplayText()
+        public bool IsHidden()
         {
-            if (!_hidden) return _text;
-
-            char[] arr = new char[_text.Length];
-            for (int i = 0; i < _text.Length; i++)
-            {
-                char c = _text[i];
-                if (char.IsLetterOrDigit(c))
-                    arr[i] = '_';
-                else
-                    arr[i] = c; // keep punctuation
-            }
-            return new string(arr);
+            return _hidden;
         }
 
-        // Consider a token a "word" only if it has at least one letter or digit
         public bool IsWordToken()
         {
-            for (int i = 0; i < _text.Length; i++)
-            {
-                if (char.IsLetterOrDigit(_text[i]))
-                    return true;
-            }
-            return false;
+            return true;
         }
 
-        public string Original => _text;
+        public string GetDisplayText()
+        {
+            if (_hidden)
+            {
+                string mask = "";
+                for (int i = 0; i < _text.Length; i++)
+                {
+                    mask += "_";
+                }
+                return mask;
+            }
+
+            return _text;
+        }
+
+        public string GetOriginal()
+        {
+            return _text;
+        }
     }
 }
