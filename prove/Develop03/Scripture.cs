@@ -84,6 +84,7 @@ namespace ScriptureMemorizer
                 count = visible.Count;
             }
 
+            // CHANGED BY CHATGPT — hand-written shuffle (no LINQ, no lambdas)
             for (int i = visible.Count - 1; i > 0; i--)
             {
                 int j = _rand.Next(i + 1);

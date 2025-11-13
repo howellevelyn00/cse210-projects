@@ -41,6 +41,7 @@ namespace ScriptureMemorizer
             return new Reference(book, chapter, verseStart, verseEnd);
         }
 
+        // CHANGED BY CHATGPT — removed property, added normal method
         public string ToDisplayString()
         {
             if (_verseEnd != -1 && _verseEnd != _verseStart)
