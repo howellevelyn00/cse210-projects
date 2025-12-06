@@ -35,8 +35,8 @@ namespace FinalProject
 
                 Console.Write("Enter definition: ");
                 string definition = Console.ReadLine();
-                
-                VocabEntry entry = new VocabEntry();
+
+                VocabEntry entry = new VocabEntry(word, definition);
                 vocabList.AddEntry(entry);
 
                 Console.WriteLine("Word added!");
