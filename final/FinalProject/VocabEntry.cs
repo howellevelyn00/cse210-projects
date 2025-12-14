@@ -13,8 +13,19 @@ namespace FinalProject
             this.chapter = chapter;
         }
 
-        public string Word => word;
-        public string Definition => definition;
-        public string Chapter => chapter;
+        public string Word
+        {
+            get { return word; }
+        }
+
+        public string Definition
+        {
+            get { return definition; }
+        }
+
+        public string Chapter
+        {
+            get { return chapter; }
+        }
     }
 }
