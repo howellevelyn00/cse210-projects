@@ -1,29 +1,20 @@
 namespace FinalProject
 {
     public class VocabEntry
-{
-    private string word;
-    private string definition;
-    
-    public VocabEntry(string word, string definition)
     {
-        this.word = word;
-        this.definition = definition;
-    }
+        private string word;
+        private string definition;
+        private string chapter;
 
-    public string GetWord()
-    {
-        return word;
-    }
+        public VocabEntry(string word, string definition, string chapter)
+        {
+            this.word = word;
+            this.definition = definition;
+            this.chapter = chapter;
+        }
 
-    public string GetDefinition()
-    {
-        return definition;
+        public string Word => word;
+        public string Definition => definition;
+        public string Chapter => chapter;
     }
-
-    public void SetDefinition(string definition)
-    {
-        this.definition = definition;
-    }
-}
 }

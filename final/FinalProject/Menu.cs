@@ -1,58 +1,70 @@
 using System;
+
 namespace FinalProject
 {
     public class Menu
     {
-        private QuizEngine quizEngine = new QuizEngine();
+        private VocabularyList vocabList;
+        private FileManager fileManager;
+        private QuizEngine quizEngine;
 
-        private VocabularyList vocabList = new VocabularyList();
-
-        public void ShowMenu()
+        public Menu()
         {
-            int choice = -1;
+            vocabList = new VocabularyList();
+            fileManager = new FileManager();
+            quizEngine = new QuizEngine();
+        }
 
-            while (choice != 0)
+        public void Run()
+        {
+            bool running = true;
+
+            while (running)
             {
-                Console.WriteLine("\nChoose an option:");
-                Console.WriteLine("1. Add word and definition");
+                Console.WriteLine("\n1. Add word");
                 Console.WriteLine("2. Save");
                 Console.WriteLine("3. Load");
                 Console.WriteLine("4. Take quiz");
-                Console.WriteLine("0. Exit");
+                Console.WriteLine("5. Exit");
+                Console.Write("Choice: ");
 
                 string input = Console.ReadLine();
-                int.TryParse(input, out choice);
-                HandleInput(choice);
+
+                switch (input)
+                {
+                    case "1":
+                        AddWord();
+                        break;
+                    case "2":
+                        fileManager.Save(vocabList, "vocab.txt");
+                        break;
+                    case "3":
+                        vocabList = fileManager.Load("vocab.txt");
+                        break;
+                    case "4":
+                        Console.Write("Enter chapter: ");
+                        string chapter = Console.ReadLine();
+                        quizEngine.StartQuiz(vocabList, chapter);
+                        break;
+                    case "5":
+                        running = false;
+                        break;
+                }
             }
         }
 
-        public void HandleInput(int choice)
+        private void AddWord()
         {
-            if (choice == 1)
-            {
-                Console.Write("Enter word: ");
-                string word = Console.ReadLine();
+            Console.Write("Word: ");
+            string word = Console.ReadLine();
 
-                Console.Write("Enter definition: ");
-                string definition = Console.ReadLine();
+            Console.Write("Definition: ");
+            string definition = Console.ReadLine();
 
-                VocabEntry entry = new VocabEntry(word, definition);
-                vocabList.AddEntry(entry);
+            Console.Write("Chapter: ");
+            string chapter = Console.ReadLine();
 
-                Console.WriteLine("Word added!");
-            }
-            else if (choice == 2)
-            {
-                Console.WriteLine("Save functionality not implemented yet.");
-            }
-            else if (choice == 3)
-            {
-                Console.WriteLine("Save functionality not implemented yet.");
-            }
-            else if (choice == 4)
-            {
-                quizEngine.StartQuiz(vocabList);
-            }
+            vocabList.AddEntry(new VocabEntry(word, definition, chapter));
         }
     }
 }

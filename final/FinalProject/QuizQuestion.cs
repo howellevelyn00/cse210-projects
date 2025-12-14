@@ -1,27 +1,14 @@
-using System;
 namespace FinalProject
 {
-public abstract class QuizQuestion
-{
-    protected string prompt;
-    protected string answer;
-
-    public QuizQuestion(string prompt, string answer)
+    public abstract class QuizQuestion
     {
-        this.prompt = prompt;
-        this.answer = answer;
-    }
+        protected string prompt;
 
-    public abstract bool Ask();
+        public QuizQuestion(string prompt)
+        {
+            this.prompt = prompt;
+        }
 
-    public string GetPrompt()
-    {
-        return prompt;
+        public abstract bool Ask();
     }
-
-    public string GetAnswer()
-    {
-        return answer;
-    }
-}
 }
